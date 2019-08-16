@@ -2,6 +2,8 @@ console.log("Hello!")
 
 import io from "socket.io-client"
 import jQuery from "jquery"
+import "bootstrap"
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 var socket = io();
 //Msg
