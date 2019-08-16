@@ -1,9 +1,8 @@
-console.log("Hello!")
-
 import io from "socket.io-client"
 import jQuery from "jquery"
 import "bootstrap"
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import Vue from 'vue/dist/vue.js'
 
 var socket = io();
 //Msg
@@ -31,3 +30,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 window.jQuery = jQuery;
+window.Vue    = Vue;
