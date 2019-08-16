@@ -3,6 +3,7 @@ import socketio
 import webbrowser
 import pandas
 import json
+from io import BytesIO
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -11,9 +12,37 @@ sio.attach(app)
 
 async def index(request):
     """Serve the client-side application."""
-    with open('view/index.html',"rb") as f:
+    with open('dist/index.html',"rb") as f:
         return web.Response(text=f.read().decode("utf8"), content_type='text/html')
 app.router.add_get('/', index)
+
+async def upload_handler(request):
+    """Handle Update File."""
+    reader = await request.multipart()
+
+    socket_field,file_field = False,False
+
+    async for field in reader:
+        print("Receive:",field.name)
+        #if field.name == "socket":
+        #    socket_field = field
+        if field.name == "file":
+            file_field = field
+        break
+    
+    
+    #socket_field = await socket_field.read(decode=True)
+    byte,size = BytesIO(),0
+    while True:
+        chunk = await file_field.read_chunk()
+        if not chunk:
+            break
+        size += len(chunk)
+        byte.write(chunk)
+    print("Receive File:",size)
+    return web.Response(text=str(size))
+    
+app.router.add_post('/upload', upload_handler)
 
 @sio.event
 def connect(sid, environ):
@@ -60,8 +89,6 @@ class sampler(object):
         self.criteria =  criteria
         self.exclude  =  exclude
     
-
-
 if __name__ == '__main__':
     host,port="127.0.0.1",8888
     web.run_app(app,host=host,port=port)
