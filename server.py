@@ -7,7 +7,7 @@ from io import BytesIO
 
 sio = socketio.AsyncServer()
 app = web.Application()
-app.router.add_static('/static', 'node_modules\socket.io-client\dist')
+app.router.add_static('/static', 'dist')
 sio.attach(app)
 
 async def index(request):
@@ -23,24 +23,23 @@ async def upload_handler(request):
     socket_field,file_field = False,False
 
     async for field in reader:
-        print("Receive:",field.name)
-        #if field.name == "socket":
-        #    socket_field = field
+        if field.name == "socket":
+            socket_field = await field.text()
         if field.name == "file":
-            file_field = field
-        break
+            file_field,size = BytesIO(),0
+            while True:
+                chunk = await field.read_chunk()
+                if not chunk:
+                    break
+                size += len(chunk)
+                file_field.write(chunk)
+            print("Received file in size of {}.".format(size))
     
-    
-    #socket_field = await socket_field.read(decode=True)
-    byte,size = BytesIO(),0
-    while True:
-        chunk = await file_field.read_chunk()
-        if not chunk:
-            break
-        size += len(chunk)
-        byte.write(chunk)
-    print("Receive File:",size)
-    return web.Response(text=str(size))
+    if socket_field and file_field:
+        await sio.emit('msg',"Received file in size of {}.".format(size), room=socket_field)
+        return web.Response(text="OK")
+    else:
+        return web.Response(text="Error")
     
 app.router.add_post('/upload', upload_handler)
 
