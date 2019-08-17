@@ -5,10 +5,10 @@
     <title>My Chatroom</title>
     <style>
        body {
-           font-family: -apple-system,BlinkMacSystemFont,"Microsoft JhengHei UI","Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+           font-family: -apple-system,BlinkMacSystemFont,"Microsoft JhengHei UI","Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
        }
        .no-border{
-           border: 0px;
+           border: 0px !important;
        }
     </style>
 </head>
@@ -45,6 +45,18 @@
                     <div class="card-body">
                         <h5 class="card-title"><b>選擇檔案</b></h5>
                         <input type="file" id="file" multiple="multiple"/>
+                        
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item no-border">
+                                檔案狀態 
+                                <span v-if="file_status.status == true" class="badge badge-success">正確</span>
+                                <span v-if="file_status.status == false" class="badge badge-danger">錯誤</span>
+                                <span v-if="file_status.status == null" class="badge badge-secondary">請選擇檔案</span>
+                            </li>
+                            <li v-if="file_status.status == false"  class="list-group-item no-border">錯誤原因 {{file_status.reason}}</li>
+                            <li v-if="file_status.status == true" class="list-group-item no-border">{{file_status.row}} 列 X {{file_status.column}} 欄，借貸方差額 = {{file_status.diff}}</li>
+                        </ul>
+
                     </div>
                 </div>
 
@@ -108,7 +120,7 @@
 
         <div class="row fixed-bottom" id="notify">
             <div class="col-sm">
-                <div class="card card-body" style="max-height: 100px;overflow: overlay;">
+                <div class="card card-body no-border" style="max-height: 100px;overflow: overlay;">
                     <p v-for="msg in message">{{msg}}</p> 
                 </div>
             </div>
@@ -120,7 +132,13 @@
         var app = new Vue({
             el: '#app',
             data: {
-                message: "Hello Vue"
+                message: "Hello Vue",
+                file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
+            },
+            sockets:{
+                file_status:function(data){
+                    this.file_status = data
+                }
             }
         })
 
@@ -131,7 +149,7 @@
             },
             updated:function(){
                 var obj = jQuery("#notify > .col-sm > .card")
-                obj.scrollTop(obj.offset().top)
+                obj.animate({scrollTop: obj.offset().top})
             },
             sockets:{
                 connect:function(data){
