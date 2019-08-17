@@ -21,9 +21,9 @@ async def load_and_check(byte,sid):
     global ledger
     byte.seek(0)
     df = pandas.read_excel(byte)
-    await sio.emit('msg',"已開啟明細帳，共{}列{}欄".format(len(df),len(df.columns)), room=sid)
-    await sio.emit('msg',"進行檢查...", room=sid)
+    await sio.emit('msg',"進行檢查", room=sid)
     try:
+        #檢查
         assert "date"       in df,"未含有日期欄位:date"
         assert "acc_no"     in df,"未含有科目編號欄位:acc_no"
         assert "vou"        in df,"未含有傳票編號欄位:vou"
@@ -31,16 +31,29 @@ async def load_and_check(byte,sid):
         assert "note"       in df,"未含有摘要欄位:note"
         assert "debit"      in df,"未含有借方欄位:debit"
         assert "credit"     in df,"未含有貸方欄位:credit"
-        #顯示借貸方差額
-        diff = df["debit"].sum() - df["credit"].sum()
-        await sio.emit('msg',"借貸方差額={}".format(diff), room=sid)
     except Exception as e:
-        await sio.emit('error',str(e), room=sid)
+        #未通過檢查
+        file_status = {
+            "status":False,
+            "reason":str(e),
+            "row":None,
+            "column":None,
+            "diff":None,
+            "account":None
+        }
     else:
-        await sio.emit('msg',"通過檢查", room=sid)
+        #通過檢查
+        file_status = {
+            "status":True,
+            "reason":None,
+            "row":len(df),
+            "column":len(df.columns),
+            "diff":df["debit"].sum() - df["credit"].sum(),
+            "account":df[["acc_no","acc_name"]].drop_duplicates().to_dict(orient="records")
+        }
         ledger = df
-        unique = ledger[["acc_no","acc_name"]].drop_duplicates().to_json(orient="records")
-        await sio.emit('set_account',unique, room=sid)
+    finally:
+        await sio.emit('file_status',file_status, room=sid)
 
 async def upload_handler(request):
     """Handle Update File."""
