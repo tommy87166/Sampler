@@ -3,21 +3,14 @@ import jQuery from "jquery"
 import "bootstrap"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Vue from 'vue/dist/vue.js'
+import VueSocketIO from 'vue-socket.io';
 
 var socket = io();
-//Msg
-socket.on("msg", function (data) {
-    console.log("Info:",data)
-    jQuery("#notify").append("<p>Info:"+data+"</p>")
-});
-socket.on("error", function (data) {
-    console.log("Error:",data)
-    jQuery("#notify").append("<p>Error:"+data+"</p>")
-});
-//Set Account
-socket.on("set_account", function (data) {
-    console.log("set_account:",data)
-});
+
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: socket
+}));
 
 document.addEventListener('DOMContentLoaded', function () {
     const fileUploader = document.querySelector('#file');
