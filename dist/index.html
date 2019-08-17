@@ -13,17 +13,6 @@
     </style>
 </head>
 <body>
-<!--
-    <div id="file_upload_area">
-        <h3>上傳檔案</h3>
-        <input type="file" id="file" multiple="multiple"/>
-    </div>
-
-    <div id="app">
-        {{message}}
-    </div>
-//-->
-
 
     <div class="container-fluid" style="margin-top: 10px">
 
@@ -31,14 +20,42 @@
         
             <div class="col-sm-3">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">載入檔案</a>
-                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">設定規則集</a>
-                    <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">對應規則集</a>
-                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">抽樣</a>
-                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">輸出檔案</a>
+                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click='changeview("file")'>載入檔案</a>
+                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false" v-on:click='changeview("rule")'>設定規則集</a>
+                    <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false" v-on:click='changeview("map")'>對應規則集</a>
+                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false" v-on:click='changeview("sample")'>抽樣</a>
+                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false" v-on:click='changeview("output")'>輸出檔案</a>
                 </div>
             </div>
-            <fileUploadView :file_status="file_status"></fileUploadView>
+            <fileUploadView @hook:mounted="fileViewMounted" v-if='view == "file"' :file_status="file_status"></fileUploadView>
+
+            <div class="col-sm" v-if='view == "map"'>
+                <table class="table">
+                        <thead>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">科目編號</th>
+                            <th scope="col">科目名稱</th>
+                            <th scope="col">規則</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item , index) in file_status.account">
+                                <th scope="row">{{index + 1}}</th>
+                                <td>{{item.acc_no}}</td>
+                                <td>{{item.acc_name}}</td>
+                                <td>
+                                    <select class="custom-select">
+                                        <option selected>不抽樣</option>
+                                        <option value="1">T10_薪資支出</option>
+                                        <option value="2">T18_租金支出</option>
+                                        <option value="3">T32_其他費用</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                </table>
+            </div>
 
 
         </div>
@@ -60,8 +77,22 @@
         var app = new Vue({
             el: '#app',
             data: {
-                message: "Hello Vue",
+                view:"file",
                 file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
+            },
+            methods:{
+                changeview:function(view){
+                    this.view = view
+                },
+                fileViewMounted:function(){
+                    const fileUploader = document.querySelector('#file');
+                    fileUploader.addEventListener('change', (e) => {
+                        let form = new FormData();
+                        form.append("socket",socket.id)
+                        form.append("file",fileUploader.files[0])
+                        fetch("/upload",{method:'post',body:form})
+                    }); 
+                }
             },
             sockets:{
                 file_status:function(data){
