@@ -22,5 +22,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+new Vue({
+    el: '#notify',
+    data: {
+        message: [],
+    },
+    updated:function(){
+        var obj = jQuery("#notify > .col-sm > .card")
+        obj.animate({scrollTop: obj.offset().top})
+    },
+    sockets:{
+        connect:function(data){
+            this.message.push("Info:已連線到伺服器")
+        },
+        msg:function(data){
+            this.message.push("Info:"+data)
+        },
+        error:function(data){
+            this.message.push("Error:"+data)
+        }
+    }
+})
+
 window.jQuery = jQuery;
 window.Vue    = Vue;

@@ -54,6 +54,7 @@ async def load_and_check(byte,sid):
         ledger = df
     finally:
         await sio.emit('file_status',file_status, room=sid)
+        await sio.emit('msg',"完成檢查", room=sid)
 
 async def upload_handler(request):
     """Handle Update File."""
