@@ -4,6 +4,7 @@ import "bootstrap"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import Vue from 'vue/dist/vue.js'
 import VueSocketIO from 'vue-socket.io';
+import comp from "./testcomp.vue"
 
 var socket = io();
 
@@ -46,3 +47,4 @@ new Vue({
 
 window.jQuery = jQuery;
 window.Vue    = Vue;
+window.comp  = comp;
