@@ -28,9 +28,9 @@
                 </div>
             </div>
 
-            <fileUploadView @hook:mounted="fileViewMounted" v-if='view == "file"' :file_status="file_status"></fileUploadView>
-            <rulesetview  v-if='view == "rule"' :rules="rules"></rulesetview>
-            <mappingview  v-if='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
+            <fileUploadView @hook:mounted="fileViewMounted" v-show='view == "file"' :file_status="file_status"></fileUploadView>
+            <rulesetview  v-show='view == "rule"' :rules="rules"></rulesetview>
+            <mappingview  v-show='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
 
         </div>
 
