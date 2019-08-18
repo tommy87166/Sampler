@@ -149,6 +149,13 @@ async def change_rule(sid,data):
         print("No Changed Rule.")
     print("------------\n\n")
 
+@sio.event
+async def sample(sid,data):
+    
+
+
+    print(data)
+
 if __name__ == '__main__':
     host,port="127.0.0.1",8888
     loop = asyncio.get_event_loop()

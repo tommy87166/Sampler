@@ -30,7 +30,7 @@
 
             <fileUploadView @hook:mounted="fileViewMounted" v-if='view == "file"' :file_status="file_status"></fileUploadView>
             <rulesetview  v-if='view == "rule"' :rules="rules"></rulesetview>
-            <mappingview  v-if='view == "map"' :rules="rules" :mapping="mapping" :file_status="file_status"></mappingview>
+            <mappingview  v-if='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
 
         </div>
 
@@ -67,7 +67,6 @@
                 view:"file",
                 file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
                 rules:{},
-                mapping:{},
             },
             watch:{
                 rules:{

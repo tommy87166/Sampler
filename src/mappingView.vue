@@ -1,5 +1,6 @@
 <template>
 <div class="col-sm">
+    <button type="button" class="btn btn-primary" v-on:click="sample">Run</button>
     <table class="table">
             <thead>
                 <tr>
@@ -42,11 +43,12 @@
 
 <script>
 module.exports = {
-  props: ['rules','mapping','file_status'],
+  props: ['rules','file_status'],
   data:function(){
       return{
         select_account:[],
         select_rule:"",
+        mapping:{}
       }
   },
   methods:{
@@ -79,6 +81,9 @@ module.exports = {
             return ""
         }
     },
+    sample:function(){
+        this.$socket.emit("sample",this.mapping)
+    }
   },
   computed:{
         leftaccount:function(){
