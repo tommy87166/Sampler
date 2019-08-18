@@ -1,7 +1,6 @@
 <template>
 <div class="col-sm">
-    <button type="button" class="btn btn-primary" v-on:click="sample">Run</button>
-    <br>
+    <button type="button" class="btn btn-primary" v-on:click="sample" style="margin-bottom: 10px;">執行抽樣</button>
     <table class="table">
             <thead>
                 <tr>

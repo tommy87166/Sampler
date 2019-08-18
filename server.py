@@ -218,8 +218,7 @@ async def sample(sid,data):
         sampler.write(writer)
         sampler.stat(stat)
     #Stat
-    stat = pandas.DataFrame(stat)
-    stat.to_excel(writer,sheet_name="統計")
+    pandas.DataFrame(stat).to_excel(writer,sheet_name="統計")
     writer.save()
     #IO
     await sio.emit('stat',stat, room=sid)

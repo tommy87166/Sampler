@@ -66,6 +66,7 @@
                 view:"file",
                 file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
                 rules:{},
+                stat:[]
             },
             watch:{
                 rules:{
@@ -105,6 +106,9 @@
                     }else if(typeof(data)=="object"){
                         this.rules = data
                     }
+                },
+                stat:function(data){
+                    this.stat = data
                 }
             },
             components: {fileuploadview:fileUploadView,rulesetview:ruleSetView,mappingview:mappingView}
