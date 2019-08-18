@@ -1,6 +1,7 @@
 <template>
 <div class="col-sm">
     <button type="button" class="btn btn-primary" v-on:click="sample">Run</button>
+    <br>
     <table class="table">
             <thead>
                 <tr>
