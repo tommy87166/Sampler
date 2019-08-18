@@ -31,6 +31,33 @@
             <rulesetview  v-show='view == "rule"' :rules="rules"></rulesetview>
             <mappingview  v-show='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
 
+            <div class="col-sm" v-show='view == "sample"'>
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">名稱</th>
+                        <th scope="col">母體</th>
+                        <th scope="col">換算月數</th>
+                        <th scope="col">換算母體</th>
+                        <th scope="col">抽樣金額</th>
+                        <th scope="col">抽樣比例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item,index) in stat">
+                            <th scope="row">{{index+1}}</th>
+                            <td>{{ item["名稱"] }}</td>
+                            <td>{{ item["母體"] }}</td>
+                            <td>{{ item["換算月數"] }}</td>
+                            <td>{{ item["換算母體"] }}</td>
+                            <td>{{ item["抽樣金額"] }}</td>
+                            <td>{{ item["抽樣比例"] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
 
         <div class="row fixed-bottom" id="notify">
