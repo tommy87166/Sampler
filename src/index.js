@@ -6,6 +6,7 @@ import Vue from 'vue/dist/vue.js'
 import VueSocketIO from 'vue-socket.io';
 import fileUploadView from "./fileUploadView.vue"
 import ruleSetView from "./ruleSetView.vue"
+import mappingView from "./mappingView.vue"
 
 var socket = io();
 
@@ -40,4 +41,5 @@ window.jQuery = jQuery;
 window.Vue    = Vue;
 window.fileUploadView  = fileUploadView;
 window.ruleSetView     = ruleSetView;
+window.mappingView     = mappingView;
 window.socket = socket;
