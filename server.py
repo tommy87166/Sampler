@@ -86,7 +86,69 @@ def connect(sid, environ):
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
-    
+
+
+class sampler(object):
+    def __init__(self,name,method,direction,criteria,exclude=[]):
+        self.name      = name
+        self.method    = method
+        self.direction = direction
+        self.criteria  = criteria
+        self.exclude   = exclude
+    def __jsonencode__(self):
+        return {
+            "name"      : self.name, 
+            "method"    : self.method,
+            "direction" : self.direction,
+            "criteria"  : self.criteria,
+            "exclude"   : self.exclude
+        }
+
+class AdvancedJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, '__jsonencode__'):
+            return obj.__jsonencode__()
+
+test_sampler  = sampler("T12_薪資支出","order","debit",3,[])
+test_sampler2 = sampler("T32_銷貨","percent","credit",3,[])
+
+rules = {"T12_薪資支出":test_sampler,"T32_銷貨":test_sampler2}
+
+@sio.event
+async def set_rule(sid, data):
+    name,method,direction,criteria,exclude = data["name"],data["method"],data["direction"],data["criteria"],data["exclude"]
+    rules[name] = sampler(name,method,direction,criteria,exclude)
+    await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
+
+@sio.event
+async def delete_rule(sid, data):
+    del rules[data]
+    await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
+
+@sio.event
+async def get_rule(sid):
+    await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
+
+@sio.event
+async def change_rule(sid,data):
+    print("---Change Rule Event---")
+    change = False
+    for key in data:
+        for field in data[key]:
+            selected_sampler = rules[key]
+            oldVal = getattr(selected_sampler,field)
+            newVal = data[key][field]
+            if newVal  != oldVal :
+                print("Change Key:",key,"Field:",field,"Value:",oldVal," -> ",newVal)
+                setattr(selected_sampler,field,data[key][field])
+                change = True
+    if change:
+        await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
+        print("Changed Rule Sent.")
+    else:
+        print("No Changed Rule.")
+    print("------------\n\n")
+
 if __name__ == '__main__':
     host,port="127.0.0.1",8888
     loop = asyncio.get_event_loop()

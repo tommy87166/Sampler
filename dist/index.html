@@ -29,6 +29,44 @@
             </div>
             <fileUploadView @hook:mounted="fileViewMounted" v-if='view == "file"' :file_status="file_status"></fileUploadView>
 
+            <div class="col-sm" v-if='view == "rule"'>
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">名稱</th>
+                        <th scope="col">方法</th>
+                        <th scope="col">方向</th>
+                        <th scope="col">參數</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, key, index) in rules">
+                            <th scope="row">{{index + 1}}</th>
+                            <td>{{item.name}}</td>
+                            <td>
+                                <select v-model="item.method" class="custom-select">
+                                    <option value="order">個數</option>
+                                    <option value="percent">比例</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select v-model="item.direction" class="custom-select">
+                                    <option value="debit">借方</option>
+                                    <option value="credit">貸方</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="form-control" min="0" required type="number" v-model.number="item.criteria" debounce="1000" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
             <div class="col-sm" v-if='view == "map"'>
                 <table class="table">
                         <thead>
@@ -74,11 +112,39 @@
     </div>
     <script src="/static/bundle.js"></script>
     <script>
+
+        function hasSameProps( obj1, obj2 ) {
+            var obj1Props = Object.keys( obj1 ),
+                obj2Props = Object.keys( obj2 );
+            if ( obj1Props.length == obj2Props.length ) {
+                return obj1Props.every( function( prop ) {
+                return obj2Props.indexOf( prop ) >= 0;
+                });
+            }
+            return false;
+        }
+
+
         var app = new Vue({
             el: '#app',
             data: {
                 view:"file",
                 file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
+                rules:{},
+            },
+            watch:{
+                rules:{
+                    handler: function (val, oldVal) {
+                        if (Object.keys(oldVal).length != 0 && hasSameProps(val, oldVal) )  {
+                            //僅對於值的修改做出反應，Rule的新增或刪除，係直接發送socket
+                            //故要求 val oldVal 兩 Objects 要有相同的Key
+                            console.log("Detect Rule Changed.")
+                            this.$socket.emit('change_rule', val)
+                        }
+
+                    },
+                    deep: true
+                }
             },
             methods:{
                 changeview:function(view){
@@ -97,10 +163,19 @@
             sockets:{
                 file_status:function(data){
                     this.file_status = data
+                },
+                rules:function(data){
+                    if (typeof(data)=="string"){
+                        this.rules = JSON.parse(data)
+                    }else if(typeof(data)=="object"){
+                        this.rules = data
+                    }
                 }
             },
             components: {fileuploadview:fileUploadView}
         })
+
+        socket.emit("get_rule")
 
     </script>
 </body>
