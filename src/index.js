@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import Vue from 'vue/dist/vue.js'
 import VueSocketIO from 'vue-socket.io';
 import fileUploadView from "./fileUploadView.vue"
+import ruleSetView from "./ruleSetView.vue"
 
 var socket = io();
 
@@ -38,4 +39,5 @@ new Vue({
 window.jQuery = jQuery;
 window.Vue    = Vue;
 window.fileUploadView  = fileUploadView;
+window.ruleSetView     = ruleSetView;
 window.socket = socket;

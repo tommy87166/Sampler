@@ -27,43 +27,9 @@
                     <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false" v-on:click='changeview("output")'>輸出檔案</a>
                 </div>
             </div>
+
             <fileUploadView @hook:mounted="fileViewMounted" v-if='view == "file"' :file_status="file_status"></fileUploadView>
-
-            <div class="col-sm" v-if='view == "rule"'>
-                <table class="table">
-                    <thead>
-                        <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">名稱</th>
-                        <th scope="col">方法</th>
-                        <th scope="col">方向</th>
-                        <th scope="col">參數</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, key, index) in rules">
-                            <th scope="row">{{index + 1}}</th>
-                            <td>{{item.name}}</td>
-                            <td>
-                                <select v-model="item.method" class="custom-select">
-                                    <option value="order">個數</option>
-                                    <option value="percent">比例</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select v-model="item.direction" class="custom-select">
-                                    <option value="debit">借方</option>
-                                    <option value="credit">貸方</option>
-                                </select>
-                            </td>
-                            <td>
-                                <input class="form-control" min="0" required type="number" v-model.number="item.criteria" debounce="1000" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
+            <rulesetview  v-if='view == "rule"' :rules="rules"></rulesetview>
 
 
 
@@ -172,7 +138,7 @@
                     }
                 }
             },
-            components: {fileuploadview:fileUploadView}
+            components: {fileuploadview:fileUploadView,rulesetview:ruleSetView}
         })
 
         socket.emit("get_rule")
