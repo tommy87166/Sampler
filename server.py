@@ -37,7 +37,7 @@ async def load_and_check(byte,sid):
     byte.seek(0)
     #開始讀取
     try:
-        with concurrent.futures.ProcessPoolExecutor() as pool:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=1) as pool:
             df = await loop.run_in_executor(pool, partial(load_excel,byte))
         #發送通知-開始檢查
         await sio.emit('msg',"進行檢查", room=sid)
