@@ -14,8 +14,7 @@
 
     <div v-if = "uploadmappingview" class="card no-border" style="margin-bottom: 10px;">
         <div class="card-body">
-            <input type="file" id="file_mapping"/>
-            <button class="btn btn-outline-success" type="button" id="button-addon2">執行</button>
+            <input type="file" @change="loadTextFromFile" id="file_mapping"/>
         </div>
     </div>
 
@@ -117,6 +116,16 @@ module.exports = {
         }else{
             this.uploadmappingview = true
         }
+    },
+    loadTextFromFile:function(ev){
+        const file = ev.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e){
+            var data = JSON.parse(e.target.result)
+            console.log(data)
+            this.mapping = data
+        }.bind(this)
+        reader.readAsText(file);
     }
   },
   computed:{
