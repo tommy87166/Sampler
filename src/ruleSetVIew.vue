@@ -30,7 +30,13 @@
                     </select>
                 </td>
                 <td>
-                    <input v-model="criteria" class="form-control" min="0" required type="number" />
+                    <div class="input-group mb-3">
+                        <input v-model="criteria" class="form-control" min="0" required type="number" />
+                         <div class="input-group-append">
+                            <span v-if=' method == "order" ' class="input-group-text">筆</span>
+                            <span v-if=' method == "percent" ' class="input-group-text">%</span>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <button v-on:click="addRule" type="button" class="btn btn-success">新增</button>
@@ -53,7 +59,13 @@
                     </select>
                 </td>
                 <td>
-                    <input class="form-control" min="0" required type="number" v-model.number="item.criteria" />
+                    <div class="input-group mb-3">
+                        <input class="form-control" min="0" required type="number" v-model.number="item.criteria" />
+                        <div class="input-group-append">
+                            <span v-if=' item.method == "order" ' class="input-group-text">筆</span>
+                            <span v-if=' item.method == "percent" ' class="input-group-text">%</span>
+                        </div>
+                    </div>
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger" v-on:click="deleteRule" :data-name="item.name">刪除</button>
