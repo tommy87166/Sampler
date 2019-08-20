@@ -36,7 +36,7 @@
                         <tr>
                             <td>日期</td>
                             <td>date</td>
-                            <td>格式為:YYYY-MM-DD<br>(EX:2019-08-01)</td>
+                            <td></td>
                         </tr>
                         <tr>
                             <td>科目編號</td>
