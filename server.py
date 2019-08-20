@@ -137,16 +137,17 @@ async def change_rule(sid,data):
 
 @sio.event
 async def read_rule(sid):
+    global rules
     try:
         with open("ruleset.pkl","rb") as f:
             rules = pickle.load(f)
-            print(rules)
         await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
 
 @sio.event
 async def save_rule(sid):
+    global rules
     try:
         with open("ruleset.pkl","wb") as f:
             pickle.dump(rules,f)
