@@ -6,6 +6,8 @@ import pandas
 import json
 from io import BytesIO
 from sample import AdvancedJSONEncoder,sampler
+import concurrent.futures
+from functools import partial
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -18,12 +20,23 @@ async def index(request):
         return web.Response(text=f.read().decode("utf8"), content_type='text/html')
 app.router.add_get('/', index)
 
+#欲將 Cpu-Bounding 工作放入Process-Executor，故建立讀取函數
+def load_excel(byte):
+    df = pandas.read_excel(byte)
+    return df
+
 async def load_and_check(byte,sid):
     global ledger
+    #發送通知-開始讀取
+    await sio.emit('msg',"讀取檔案中", room=sid)
+    #將BytesIO位置指向0
     byte.seek(0)
-    df = pandas.read_excel(byte)
-    await sio.emit('msg',"進行檢查", room=sid)
+    #開始讀取
     try:
+        with concurrent.futures.ProcessPoolExecutor() as pool:
+            df = await loop.run_in_executor(pool, partial(load_excel,byte))
+        #發送通知-開始檢查
+        await sio.emit('msg',"進行檢查", room=sid)
         #檢查
         assert "date"       in df,"未含有日期欄位:date"
         assert "acc_no"     in df,"未含有科目編號欄位:acc_no"
@@ -56,6 +69,7 @@ async def load_and_check(byte,sid):
     finally:
         await sio.emit('file_status',file_status, room=sid)
         await sio.emit('msg',"完成檢查", room=sid)
+    
 
 async def upload_handler(request):
     """Handle Update File."""
