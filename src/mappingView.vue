@@ -3,13 +3,20 @@
 
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px;">
         <div class="btn-group mr-2" role="group" aria-label="First group">
-            <button type="button" class="btn btn-outline-secondary" >上傳對應</button>
+            <button type="button" class="btn btn-outline-secondary" v-on:click="toggleuploadmappingview">上傳對應</button>
             <button type="button" class="btn btn-outline-secondary" v-on:click="downloadMapping">下載對應</button>
         </div>
         <div class="btn-group mr-2" role="group" aria-label="Second group">
             <button type="button" class="btn btn-outline-success" v-on:click="sample" >執行抽樣</button>
         </div>
         <a id="download_link" style="display: none;" download="mapping.json"></a>
+    </div>
+
+    <div v-if = "uploadmappingview" class="card no-border" style="margin-bottom: 10px;">
+        <div class="card-body">
+            <input type="file" id="file_mapping"/>
+            <button class="btn btn-outline-success" type="button" id="button-addon2">執行</button>
+        </div>
     </div>
 
     <table class="table">
@@ -59,7 +66,8 @@ module.exports = {
       return{
         select_account:[],
         select_rule:"",
-        mapping:{}
+        mapping:{},
+        uploadmappingview:false
       }
   },
   methods:{
@@ -102,6 +110,13 @@ module.exports = {
         document.getElementById('download_link').href = url
         document.getElementById('download_link').click()
         window.URL.revokeObjectURL(url)
+    },
+    toggleuploadmappingview:function(){
+        if (this.uploadmappingview){
+            this.uploadmappingview = false
+        }else{
+            this.uploadmappingview = true
+        }
     }
   },
   computed:{
