@@ -1,6 +1,17 @@
 <template>
 <div class="col-sm">
-    <button type="button" class="btn btn-primary" v-on:click="sample" style="margin-bottom: 10px;">執行抽樣</button>
+
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px;">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-outline-secondary" >上傳對應</button>
+            <button type="button" class="btn btn-outline-secondary" v-on:click="downloadMapping">下載對應</button>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="Second group">
+            <button type="button" class="btn btn-outline-success" v-on:click="sample" >執行抽樣</button>
+        </div>
+        <a id="download_link" style="display: none;" download="mapping.json"></a>
+    </div>
+
     <table class="table">
             <thead>
                 <tr>
@@ -83,6 +94,14 @@ module.exports = {
     },
     sample:function(){
         this.$socket.emit("sample",this.mapping)
+    },
+    downloadMapping:function(){
+        var text = JSON.stringify(this.mapping)
+        var data = new Blob([text], {type: 'text/plain'})
+        var url = window.URL.createObjectURL(data)
+        document.getElementById('download_link').href = url
+        document.getElementById('download_link').click()
+        window.URL.revokeObjectURL(url)
     }
   },
   computed:{
