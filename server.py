@@ -8,6 +8,7 @@ from io import BytesIO
 from sample import AdvancedJSONEncoder,sampler
 import concurrent.futures
 from functools import partial
+import os
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -94,15 +95,6 @@ async def upload_handler(request):
         return web.Response(text="Error")
 app.router.add_post('/upload', upload_handler)
 
-@sio.event
-def connect(sid, environ):
-    print("connect ", sid)
-
-@sio.event
-def disconnect(sid):
-    print('disconnect ', sid)
-
-
 test_sampler  = sampler("T12_薪資支出","order","debit",3,[])
 test_sampler2 = sampler("T32_銷貨","percent","credit",3,[])
 
@@ -161,6 +153,21 @@ async def sample(sid,data):
     await sio.emit('stat',stat, room=sid)
     
 
+connected = set()
+@sio.event
+def connect(sid, environ):
+    print("connect ", sid)
+    connected.add(sid)
+
+@sio.event
+def disconnect(sid):
+    print('disconnect ', sid)
+    try:
+        connected.remove(sid)
+    except:
+        pass
+    if len(connected) == 0:
+        os._exit(0)
 
 if __name__ == '__main__':
     host,port="127.0.0.1",8888
