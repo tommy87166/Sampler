@@ -10,6 +10,7 @@ import concurrent.futures
 from functools import partial
 import os
 import pickle
+import itertools
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -158,9 +159,21 @@ async def save_rule(sid):
 #For Sampling View
 @sio.event
 async def sample(sid,data):
-    pass
+    print("Run Sampling:",data)
+    #驗證參數
+    await sio.emit('msg',"檢查參數", room=sid)
+    apply_rules,apply_accounts = set(data.keys()),set(itertools.chain.from_iterable(data.values()))
+    try:
+        for rule in apply_rules:
+            assert rule in rules, "規則 {} 不在定義的規則集中".format(rule)
+        for account in apply_accounts:
+            selected_df = ledger[ledger["acc_no"] == account]
+            assert len(selected_df) > 0,"明細帳中找不到科目 {}".format(account)
+    except Exception as e:
+        await sio.emit('error',str(e), room=sid)
+    finally:
+        await sio.emit('msg',"檢查參數完成", room=sid)
     
-
 
 @sio.event
 def connect(sid, environ):
