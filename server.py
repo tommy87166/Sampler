@@ -9,6 +9,7 @@ from sample import AdvancedJSONEncoder,sampler
 import concurrent.futures
 from functools import partial
 import os
+import pickle
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -20,6 +21,8 @@ async def index(request):
     with open('dist/index.html',"rb") as f:
         return web.Response(text=f.read().decode("utf8"), content_type='text/html')
 app.router.add_get('/', index)
+
+#For File Uploading View
 
 #欲將 Cpu-Bounding 工作放入Process-Executor，故建立讀取函數
 def load_excel(byte):
@@ -95,11 +98,8 @@ async def upload_handler(request):
         return web.Response(text="Error")
 app.router.add_post('/upload', upload_handler)
 
-test_sampler  = sampler("T12_薪資支出","order","debit",3,[])
-test_sampler2 = sampler("T32_銷貨","percent","credit",3,[])
-
-rules = {"T12_薪資支出":test_sampler,"T32_銷貨":test_sampler2}
-
+#For Rule Set View
+rules = {}
 @sio.event
 async def set_rule(sid, data):
     name,method,direction,criteria,exclude = data["name"],data["method"],data["direction"],data["criteria"],data["exclude"]
@@ -136,38 +136,37 @@ async def change_rule(sid,data):
     print("------------\n\n")
 
 @sio.event
+async def read_rule(sid):
+    try:
+        with open("ruleset.pkl","rb") as f:
+            rules = pickle.load(f)
+            print(rules)
+        await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
+    except Exception as e:
+        await sio.emit('error',str(e), room=sid)
+
+@sio.event
+async def save_rule(sid):
+    try:
+        with open("ruleset.pkl","wb") as f:
+            pickle.dump(rules,f)
+        await sio.emit('msg',"規則集已儲存", room=sid)
+    except Exception as e:
+        await sio.emit('error',str(e), room=sid)
+
+#For Sampling View
+@sio.event
 async def sample(sid,data):
-    writer = pandas.ExcelWriter('Output.xlsx', engine='xlsxwriter')
-    #Load Df into Sampler and sample
-    stat = []
-    for key in data:
-        sampler,accounts  = rules[key],data[key] 
-        sampler.df  = ledger[ledger["acc_no"].isin(accounts)]
-        sampler.sample()
-        sampler.write(writer)
-        sampler.stat(stat)
-    #Stat
-    pandas.DataFrame(stat).to_excel(writer,sheet_name="統計")
-    writer.save()
-    #IO
-    await sio.emit('stat',stat, room=sid)
+    pass
     
 
-connected = set()
+
 @sio.event
 def connect(sid, environ):
     print("connect ", sid)
-    connected.add(sid)
-
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
-    try:
-        connected.remove(sid)
-    except:
-        pass
-    if len(connected) == 0:
-        os._exit(0)
 
 if __name__ == '__main__':
     host,port="127.0.0.1",8888

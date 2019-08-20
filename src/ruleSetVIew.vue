@@ -1,5 +1,15 @@
 <template>
 <div class="col-sm" >
+    
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px;">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-outline-secondary" v-on:click="saveRule" >保存規則集</button>
+        </div>
+        <div class="btn-group mr-2" role="group" aria-label="Second group">
+            <button type="button" class="btn btn-outline-secondary" v-on:click="readRule" >讀取規則集</button>
+        </div>
+    </div>
+    
     <table class="table">
         <thead>
             <tr>
@@ -109,8 +119,13 @@ module.exports = {
         } else {
             alert("名稱不得為空或已經存在")
         }
-
-      }
+      },
+      readRule:function(){
+          this.$socket.emit("read_rule")
+      },
+      saveRule:function(){
+          this.$socket.emit("save_rule")
+      },
   }
 }
 </script>
