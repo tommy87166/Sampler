@@ -68,7 +68,7 @@ async def load_and_check(byte,sid):
             "row":len(df),
             "column":len(df.columns),
             "diff":df["debit"].sum() - df["credit"].sum(),
-            "account":df[["acc_no","acc_name"]].drop_duplicates().sort_values("acc_no").to_json(orient="records")
+            "account":df[["acc_no","acc_name"]].drop_duplicates().sort_values("acc_no").to_dict(orient="records")
         }
         ledger = df
     finally:
