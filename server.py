@@ -140,8 +140,11 @@ async def change_rule(sid,data):
 async def read_rule(sid):
     global rules
     try:
-        with open("ruleset.pkl","rb") as f:
-            rules = pickle.load(f)
+        #讀取規則集
+        with open("ruleset.json","r") as f:
+            rules_in_json = json.load(f)
+        #建構Sampler
+        rules = {key:sampler(data["name"],data["method"],data["direction"],data["criteria"],data["exclude"])  for (key,data) in rules_in_json.items()}
         await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
