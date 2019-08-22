@@ -91,8 +91,8 @@ class sampler(object):
     def __jsonresult__(self):
         self.__sample()
         return {
-            "df"         : self.df.to_json(orient="records"),
-            "result"     : self.result.to_json(orient="records"),
+            "df"         : json.loads(self.df.to_json(orient="records")),
+            "result"     : json.loads(self.result.to_json(orient="records")),
             "parameter"  : self.__jsonencode__(),
             "stat"       : self.stat   
         }
