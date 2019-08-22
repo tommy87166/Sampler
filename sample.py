@@ -13,6 +13,8 @@ class sampler(object):
         self.direction = direction
         self.criteria  = criteria
         self.exclude   = exclude
+        #Input
+        self.df        = None 
         #Result
     def __jsonencode__(self):
         return {
@@ -22,5 +24,5 @@ class sampler(object):
             "criteria"  : self.criteria,
             "exclude"   : self.exclude
         }
-    def sample(self,df,multiplier):
+    def sample(self,multiplier):
         pass
