@@ -117,7 +117,9 @@
                     }
                 },
                 result:function(data){
-                    this.sample = data
+                    var result = JSON.parse(data)
+                    console.log(result)
+                    this.sample = result
                 }
             },
             components: {fileuploadview:fileUploadView,rulesetview:ruleSetView,mappingview:mappingView}
