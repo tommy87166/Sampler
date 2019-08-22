@@ -162,7 +162,6 @@ async def save_rule(sid):
 #For Sampling View
 @sio.event
 async def sample(sid,data):
-    print("Run Sampling:",data)
     #驗證參數
     await sio.emit('msg',"檢查參數", room=sid)
     apply_rules,apply_accounts = set(data.keys()),set(itertools.chain.from_iterable(data.values()))
@@ -173,12 +172,12 @@ async def sample(sid,data):
             selected_df = ledger[ledger["acc_no"] == account]
             assert len(selected_df) > 0,"明細帳中找不到科目 {}".format(account)
     #將資料載入Sampler中
-        print("XX",data)
-
+        for key,accounts in data.items():
+            rules[key].df = ledger[ledger["acc_no"].isin(accounts)]
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
     finally:
-        await sio.emit('msg',"檢查參數完成", room=sid)
+        await sio.emit('msg',"資料載入完成", room=sid)
     
 
 @sio.event
