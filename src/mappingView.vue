@@ -7,7 +7,7 @@
             <button type="button" class="btn btn-outline-secondary" v-on:click="downloadMapping">下載對應</button>
         </div>
         <div class="btn-group mr-2" role="group" aria-label="Second group">
-            <button type="button" class="btn btn-outline-success" v-on:click="sample" >執行抽樣</button>
+            <button type="button" class="btn btn-outline-success" v-on:click="sample" >執行對應</button>
         </div>
         <a id="download_link" style="display: none;" download="mapping.json"></a>
     </div>

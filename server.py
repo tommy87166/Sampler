@@ -173,7 +173,7 @@ async def sample(sid,data):
             assert len(selected_df) > 0,"明細帳中找不到科目 {}".format(account)
     #將資料載入Sampler中
         for key,accounts in data.items():
-            rules[key].df = ledger[ledger["acc_no"].isin(accounts)]
+            rules[key].load( ledger[ledger["acc_no"].isin(accounts)] )
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
     finally:
@@ -181,7 +181,10 @@ async def sample(sid,data):
     
 @sio.event
 async def result(sid):
-    await sio.emit('result',json.dumps(rules,cls=AdvancedJSONEncoderResult), room=sid)
+    try:
+        await sio.emit('result',json.dumps(rules,cls=AdvancedJSONEncoderResult), room=sid)
+    except Exception as e:
+        await sio.emit('error',str(e), room=sid)
 
 
 @sio.event
