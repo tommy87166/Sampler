@@ -49,11 +49,28 @@ class sampler(object):
         }
     
     def __jsonresult__(self):
+        self.__sample()
         return {
             "df"         : self.df.to_dict(orient="records"),
             "result"     : self.result.to_dict(orient="records"),
-            "parameter"  : self.__jsonencode__()
+            "parameter"  : self.__jsonencode__(),
+            "stat"       : self.stat   
         }
     
-    def sample(self,multiplier):
+    def __sample(self):
+        #排除不想要的傳票
+        exclude = self.df [ self.df["vou"].isin(self.exclude) ].index
+        df      = self.df.drop(exclude)
+        #依抽樣方式抽樣
+        if   self.method == "order"  :
+            self.__order_sampler(df)
+        elif self.method == "percent":
+            self.__percent_sampler(df)
+        else:
+            raise Exception("Not Implemented Method")
+
+    def __order_sampler(self,df):
+        self.result = df.sort_values(self.method,ascending=False)[:self.criteria]
+    
+    def __percent_sampler(self,df):
         pass
