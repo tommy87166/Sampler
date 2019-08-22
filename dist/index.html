@@ -93,7 +93,6 @@
                 view:"file",
                 file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
                 rules:{},
-                stat:[]
             },
             watch:{
                 rules:{
@@ -134,8 +133,8 @@
                         this.rules = data
                     }
                 },
-                stat:function(data){
-                    this.stat = data
+                result:function(data){
+                    console.log(data)
                 }
             },
             components: {fileuploadview:fileUploadView,rulesetview:ruleSetView,mappingview:mappingView}

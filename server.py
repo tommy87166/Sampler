@@ -181,7 +181,7 @@ async def sample(sid,data):
     
 @sio.event
 async def result(sid):
-    await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoderResult), room=sid)
+    await sio.emit('result',json.dumps(rules,cls=AdvancedJSONEncoderResult), room=sid)
 
 
 @sio.event
