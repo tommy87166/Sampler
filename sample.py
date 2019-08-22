@@ -1,4 +1,5 @@
 import json
+import pandas
 
 class AdvancedJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -14,7 +15,7 @@ class sampler(object):
         self.criteria  = criteria
         self.exclude   = exclude
         #Input
-        self.df        = None 
+        self.df        = pandas.DataFrame()
         #Result
     def __jsonencode__(self):
         return {
