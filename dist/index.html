@@ -23,7 +23,7 @@
                     <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click='changeview("file")'>載入檔案</a>
                     <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false" v-on:click='changeview("rule")'>設定規則集</a>
                     <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false" v-on:click='changeview("map")'>對應規則集</a>
-                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false" v-on:click='changeview("sample")'>抽樣結果</a>
+                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false" v-on:click='doSample'>抽樣結果</a>
                 </div>
             </div>
 
@@ -32,30 +32,7 @@
             <mappingview  v-show='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
 
             <div class="col-sm" v-show='view == "sample"'>
-                <table class="table">
-                    <thead>
-                        <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">名稱</th>
-                        <th scope="col">母體</th>
-                        <th scope="col">換算月數</th>
-                        <th scope="col">換算母體</th>
-                        <th scope="col">抽樣金額</th>
-                        <th scope="col">抽樣比例</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item,index) in stat">
-                            <th scope="row">{{index+1}}</th>
-                            <td>{{ item["名稱"] }}</td>
-                            <td>{{ item["母體"] }}</td>
-                            <td>{{ item["換算月數"] }}</td>
-                            <td>{{ item["換算母體"] }}</td>
-                            <td>{{ item["抽樣金額"] }}</td>
-                            <td>{{ item["抽樣比例"] }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                {{sample}}
             </div>
 
         </div>
@@ -93,6 +70,7 @@
                 view:"file",
                 file_status:{status:null,reason:null,row:null,column:null,diff:null,account:[]},
                 rules:{},
+                sample:{}
             },
             watch:{
                 rules:{
@@ -121,6 +99,11 @@
                         fetch("/upload",{method:'post',body:form})
                     }); 
                 },
+                doSample:function(){
+                    this.$socket.emit("result")
+                    this.changeview("sample")
+
+                }
             },
             sockets:{
                 file_status:function(data){
@@ -134,7 +117,7 @@
                     }
                 },
                 result:function(data){
-                    console.log(data)
+                    this.sample = data
                 }
             },
             components: {fileuploadview:fileUploadView,rulesetview:ruleSetView,mappingview:mappingView}
