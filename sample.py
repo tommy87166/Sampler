@@ -11,6 +11,16 @@ class AdvancedJSONEncoderResult(json.JSONEncoder):
         if hasattr(obj, '__jsonresult__'):
             return obj.__jsonresult__()
 
+mapper = {
+    "date":"日期",
+    "acc_no":"科目編號",
+    "acc_name":"科目名稱",
+    "vou" :"傳票編號",
+    "note":"摘要",
+    "debit":"借方金額",
+    "credit":"貸方金額"
+}
+
 class sampler(object):
     def __init__(self,name,method,direction,criteria,exclude=[]):
         #Parameter
@@ -38,7 +48,7 @@ class sampler(object):
         if self.flag_sample:
             population        =  self.df["debit"].sum() - self.df["credit"].sum()
             population_expand =  population / self.multiplier[0] * self.multiplier[1]
-            size              =  self.result["debit"].sum() - self.result["credit"].sum()
+            size              =  self.result["借方金額"].sum() - self.result["貸方金額"].sum()
             ratio             =  size / population_expand
             return population,population_expand,size,ratio
         else:
@@ -52,19 +62,21 @@ class sampler(object):
             df      = self.df.drop(exclude)
             #依抽樣方式抽樣
             if   self.method == "order"  :
-                self.__order_sampler(df)
+                sampler = self.__order_sampler
             elif self.method == "percent":
-                self.__percent_sampler(df)
+                sampler = self.__percent_sampler
             else:
                 raise Exception("Not Implemented Method")
+            #抽樣 + 後處理
+            self.result = sampler(df).rename(mapper,axis=1)[mapper.values()]
             #標示為已抽樣
             self.flag_sample = True
 
     def __order_sampler(self,df):
-        self.result = df.sort_values(self.direction,ascending=False)[:self.criteria]
+        return df.sort_values(self.direction,ascending=False)[:self.criteria]
     
     def __percent_sampler(self,df):
-        pass
+        return None
 
     #Json Encorder
     def __jsonencode__(self):
