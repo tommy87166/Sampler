@@ -18,7 +18,7 @@
 
         <div class="row" id="app" style="padding-bottom: 100px">
         
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true" v-on:click='changeview("file")'>載入檔案</a>
                     <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false" v-on:click='changeview("rule")'>設定規則集</a>
@@ -30,6 +30,27 @@
             <fileUploadView @hook:mounted="fileViewMounted" v-show='view == "file"' :file_status="file_status"></fileUploadView>
             <rulesetview  v-show='view == "rule"' :rules="rules"></rulesetview>
             <mappingview  v-show='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
+
+            <div class="col-sm-2"  v-show='view == "sample"'>
+                    
+                <div class="card">
+                    <div class="card-header">選擇規則以檢視</div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" v-for="(item,key,index) in sample">
+                            {{key}}
+                            <br>
+                            <span class="badge badge-secondary">母體 ${{item.stat[1]}}</span>
+                            <span class="badge badge-secondary">樣本 ${{item.stat[2]}}</span>
+                            <span class="badge badge-secondary"> {{ Math.round( item.stat[3] * 100 )}}%</span>
+                        </li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="#" class="card-link">下載檔案</a>
+                    </div>
+                </div>
+
+
+            </div>
 
             <div class="col-sm" v-show='view == "sample"'>
                 {{sample}}
