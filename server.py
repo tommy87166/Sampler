@@ -68,7 +68,7 @@ async def load_and_check(byte,sid):
             "row":len(df),
             "column":len(df.columns),
             "diff":df["debit"].sum() - df["credit"].sum(),
-            "account":df[["acc_no","acc_name"]].drop_duplicates().to_dict(orient="records")
+            "account":df[["acc_no","acc_name"]].drop_duplicates().sort_values("acc_no").to_dict(orient="records")
         }
         ledger = df
     finally:
@@ -172,6 +172,9 @@ async def sample(sid,data):
         for account in apply_accounts:
             selected_df = ledger[ledger["acc_no"] == account]
             assert len(selected_df) > 0,"明細帳中找不到科目 {}".format(account)
+    #將資料載入Sampler中
+        print("XX",data)
+
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
     finally:
