@@ -144,7 +144,7 @@ async def read_rule(sid):
         with open("ruleset.json","r") as f:
             rules_in_json = json.load(f)
         #建構Sampler
-        rules = {key:sampler(data["name"],data["method"],data["direction"],data["criteria"],data["exclude"])  for (key,data) in rules_in_json.items()}
+        rules = {key:sampler(data["name"],data["method"],data["direction"],data["criteria"])  for (key,data) in rules_in_json.items()}
         await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoder), room=sid)
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
