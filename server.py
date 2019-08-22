@@ -5,7 +5,7 @@ import webbrowser
 import pandas
 import json
 from io import BytesIO
-from sample import AdvancedJSONEncoder,sampler
+from sample import AdvancedJSONEncoder,AdvancedJSONEncoderResult,sampler
 import concurrent.futures
 from functools import partial
 import os
@@ -179,6 +179,10 @@ async def sample(sid,data):
     finally:
         await sio.emit('msg',"資料載入完成", room=sid)
     
+@sio.event
+async def result(sid):
+    await sio.emit('rules',json.dumps(rules,cls=AdvancedJSONEncoderResult), room=sid)
+
 
 @sio.event
 def connect(sid, environ):

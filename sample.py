@@ -58,6 +58,7 @@ class sampler(object):
         }
     
     def __sample(self):
+        print("Run Sampling:",self.name)
         #排除不想要的傳票
         exclude = self.df [ self.df["vou"].isin(self.exclude) ].index
         df      = self.df.drop(exclude)
