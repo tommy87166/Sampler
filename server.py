@@ -50,6 +50,11 @@ async def load_and_check(byte,sid):
         assert "note"       in df,"未含有摘要欄位:note"
         assert "debit"      in df,"未含有借方欄位:debit"
         assert "credit"     in df,"未含有貸方欄位:credit"
+        #型別轉換
+        df["date"]     = df["date"].astype(str)
+        df["acc_no"]   = df["acc_no"].astype(str)
+        df["acc_name"] = df["acc_name"].astype(str)
+        df["vou"]      = df["vou"].astype(str)
     except Exception as e:
         #未通過檢查
         file_status = {
@@ -186,6 +191,13 @@ async def result(sid):
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
 
+@sio.event
+async def skip(sid,data):
+    try:
+        rules[ data["rule"] ].exclude.append( data["vou"] )
+        await sio.emit('result',json.dumps(rules,cls=AdvancedJSONEncoderResult), room=sid)
+    except Exception as e:
+        await sio.emit('error',str(e), room=sid)
 
 @sio.event
 def connect(sid, environ):
