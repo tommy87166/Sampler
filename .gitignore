@@ -204,3 +204,4 @@ $RECYCLE.BIN/
 *.pkl
 *.json
 bin/*
+.vscode/*
