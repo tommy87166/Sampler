@@ -241,5 +241,5 @@ app.router.add_get('/download', download)
 if __name__ == '__main__':
     host,port="127.0.0.1",8888
     loop = asyncio.get_event_loop()
-    pool = concurrent.futures.ProcessPoolExecutor(max_workers=1)
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     web.run_app(app,host=host,port=port)
