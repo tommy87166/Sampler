@@ -96,3 +96,7 @@ class sampler(object):
             "parameter"  : self.__jsonencode__(),
             "stat"       : self.stat   
         }
+
+    def to_excel(self,writer):
+        if self.flag_sample:
+            self.result.to_excel(writer,sheet_name=self.name)

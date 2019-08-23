@@ -208,10 +208,6 @@ def connect(sid, environ):
 def disconnect(sid):
     print('disconnect ', sid)
 
-to_send = BytesIO()
-to_send.write("test".encode("utf8"))
-to_send.seek(0)
-
 @streamer
 async def stream(writer,reader=None):
     while True:
@@ -221,12 +217,20 @@ async def stream(writer,reader=None):
         await writer.write(chunk)
 
 async def download(request):
-    file_name = "text.txt"  # Could be a HUGE file
+    #建立物件
+    io     = BytesIO()
+    writer = pandas.ExcelWriter(io, engine='xlsxwriter')
+    #建立檔案
+    for sampler in rules.values():
+        sampler.to_excel(writer)
+    #存檔並傳送
+    writer.save()
+    io.seek(0)
     headers = {
-        "Content-disposition": "attachment; filename={file_name}".format(file_name=file_name)
+        "Content-disposition": "attachment; filename={file_name}".format(file_name="Output.xlsx")
     }
     return web.Response(
-        body=stream(to_send),
+        body=stream(io),
         headers=headers
     )
 app.router.add_get('/download', download)
