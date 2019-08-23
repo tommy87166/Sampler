@@ -85,7 +85,6 @@ class sampler(object):
             "method"     : self.method,
             "direction"  : self.direction,
             "criteria"   : self.criteria,
-            "exclude"    : self.exclude,
         }
     
     def __jsonresult__(self):
