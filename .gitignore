@@ -203,3 +203,4 @@ $RECYCLE.BIN/
 *.xlsx
 *.pkl
 *.json
+bin/*
