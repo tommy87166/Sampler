@@ -99,4 +99,4 @@ class sampler(object):
 
     def to_excel(self,writer):
         if self.flag_sample:
-            self.result.to_excel(writer,sheet_name=self.name)
+            self.result.rename(mapper,axis=1)[mapper.values()].to_excel(writer,sheet_name=self.name,index=False)
