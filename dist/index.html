@@ -33,6 +33,10 @@
 
            
             <div class="col-sm" v-show='view == "sample"'>
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px;">
+                    <a class="btn btn-outline-secondary" href="/download" role="button">下載檔案</a>
+                </div>
+
                 <div class="card bg-light" v-for="(item , key ,index) in sample" style="margin-bottom: 10px;">
                     <div class="card-header">
                         {{key}}
