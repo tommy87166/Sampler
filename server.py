@@ -1,4 +1,5 @@
 from aiohttp import web
+from aiohttp import streamer
 import asyncio
 import socketio
 import webbrowser
@@ -11,6 +12,7 @@ from functools import partial
 import os
 import pickle
 import itertools
+
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -205,6 +207,30 @@ def connect(sid, environ):
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
+
+to_send = BytesIO()
+to_send.write("test".encode("utf8"))
+to_send.seek(0)
+
+@streamer
+async def stream(writer,reader=None):
+    while True:
+        chunk = reader.read(2 ** 16)
+        if not chunk:
+            break
+        await writer.write(chunk)
+
+async def download(request):
+    file_name = "text.txt"  # Could be a HUGE file
+    headers = {
+        "Content-disposition": "attachment; filename={file_name}".format(file_name=file_name)
+    }
+    return web.Response(
+        body=stream(to_send),
+        headers=headers
+    )
+app.router.add_get('/download', download)
+
 
 if __name__ == '__main__':
     host,port="127.0.0.1",8888
