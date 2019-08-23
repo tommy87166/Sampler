@@ -225,7 +225,7 @@ async def download(request):
     for sampler in rules.values():
         sampler.to_excel(writer)
         sampler.export_stat(stat)
-    pandas.DataFrame(stat).to_excel(writer,sheet_name="抽核比例")
+    pandas.DataFrame(stat)[["名稱","母體","換算後母體","抽核金額","抽核比例"]].to_excel(writer,sheet_name="抽核比例")
     #存檔並傳送
     writer.save()
     io.seek(0)
