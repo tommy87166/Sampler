@@ -11,7 +11,7 @@ import mappingView from "./mappingView.vue"
 var socket = io();
 
 Vue.use(new VueSocketIO({
-    debug: true,
+    debug: false,
     connection: socket
 }));
 
