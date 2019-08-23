@@ -48,7 +48,7 @@ class sampler(object):
         if self.flag_sample:
             population        =  self.df["debit"].sum() - self.df["credit"].sum()
             population_expand =  population / self.multiplier[0] * self.multiplier[1]
-            size              =  self.result["借方金額"].sum() - self.result["貸方金額"].sum()
+            size              =  self.result["debit"].sum() - self.result["credit"].sum()
             ratio             =  size / population_expand
             return population,population_expand,size,ratio
         else:
@@ -68,7 +68,7 @@ class sampler(object):
             else:
                 raise Exception("Not Implemented Method")
             #抽樣 + 後處理
-            self.result = sampler(df).rename(mapper,axis=1)[mapper.values()]
+            self.result = sampler(df)
             #標示為已抽樣
             self.flag_sample = True
 
@@ -91,7 +91,7 @@ class sampler(object):
     def __jsonresult__(self):
         self.__sample()
         return {
-            "df"         : json.loads(self.df.to_json(orient="records")),
+            #"df"         : json.loads(self.df.to_json(orient="records")),
             "result"     : json.loads(self.result.to_json(orient="records")),
             "parameter"  : self.__jsonencode__(),
             "stat"       : self.stat   

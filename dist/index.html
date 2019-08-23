@@ -31,29 +31,48 @@
             <rulesetview  v-show='view == "rule"' :rules="rules"></rulesetview>
             <mappingview  v-show='view == "map"' :rules="rules" :file_status="file_status"></mappingview>
 
-            <div class="col-sm-2"  v-show='view == "sample"'>
-                    
-                <div class="card">
-                    <div class="card-header">選擇規則以檢視</div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item" v-for="(item,key,index) in sample">
-                            {{key}}
-                            <br>
-                            <span class="badge badge-secondary">母體 ${{item.stat[1]}}</span>
-                            <span class="badge badge-secondary">樣本 ${{item.stat[2]}}</span>
-                            <span class="badge badge-secondary"> {{ Math.round( item.stat[3] * 100 )}}%</span>
-                        </li>
-                    </ul>
+           
+            <div class="col-sm" v-show='view == "sample"'>
+                <div class="card bg-light" v-for="(item , key ,index) in sample" style="margin-bottom: 10px;">
+                    <div class="card-header">
+                        {{key}}
+                        <span class="badge badge-pill badge-dark">母體：{{item.stat[1]}}</span>
+                        <span class="badge badge-pill badge-dark">樣本：{{item.stat[2]}}</span>
+                        <span class="badge badge-pill badge-dark">比例：{{Math.round(item.stat[3]*100)}}%</span>
+                    </div>
                     <div class="card-body">
-                        <a href="#" class="card-link">下載檔案</a>
+                        
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">日期</th>
+                                    <th scope="col">科目編號</th>
+                                    <th scope="col">科目名稱</th>
+                                    <th scope="col">傳票編號</th>
+                                    <th scope="col">摘要</th>
+                                    <th scope="col">借方</th>
+                                    <th scope="col">貸方</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item,index) in item.result">
+                                    <th scope="row">{{index}}</th>
+                                    <td>{{item.date}}</td>
+                                    <td>{{item.acc_no}}</td>
+                                    <td>{{item.acc_name}}</td>
+                                    <td>{{item.vou}}</td>
+                                    <td>{{item.note}}</td>
+                                    <td>{{item.debit}}</td>
+                                    <td>{{item.credit}}</td>
+                                    <td><button type="button" class="btn btn-warning btn-sm" :data-rule="key" :data-vou="item.vou" v-on:click="skipVou">Skip</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="card-text">參數 = {{item.parameter}}</p>
                     </div>
                 </div>
-
-
-            </div>
-
-            <div class="col-sm" v-show='view == "sample"'>
-                {{sample}}
             </div>
 
         </div>
@@ -124,6 +143,13 @@
                     this.$socket.emit("result")
                     this.changeview("sample")
 
+                },
+                skipVou:function(env){
+                    var payload = {
+                        rule:env.target.getAttribute("data-rule"),
+                        vou :env.target.getAttribute("data-vou")
+                    }
+                    this.$socket.emit("skip",payload)
                 }
             },
             sockets:{
