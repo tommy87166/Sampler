@@ -100,3 +100,15 @@ class sampler(object):
     def to_excel(self,writer):
         if self.flag_sample:
             self.result.rename(mapper,axis=1)[mapper.values()].to_excel(writer,sheet_name=self.name,index=False)
+
+    def export_stat(self,List):
+        if self.flag_sample:
+            population,population_expand,size,ratio = self.stat
+            data = {
+                "名稱":self.name,
+                "母體":population,
+                "換算後母體":population_expand,
+                "抽核金額":size,
+                "抽核比例":ratio
+            }
+            List.append(data)

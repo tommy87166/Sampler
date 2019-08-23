@@ -221,8 +221,11 @@ async def download(request):
     io     = BytesIO()
     writer = pandas.ExcelWriter(io, engine='xlsxwriter')
     #建立檔案
+    stat = []
     for sampler in rules.values():
         sampler.to_excel(writer)
+        sampler.export_stat(stat)
+    pandas.Dataframe(stat).to_excel(writer,sheet_name="抽核比例")
     #存檔並傳送
     writer.save()
     io.seek(0)
