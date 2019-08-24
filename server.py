@@ -11,15 +11,28 @@ from functools import partial
 import os
 import itertools
 import random
+import sys
+
+def rc(rel_path):
+    """
+    Pyinstaller --add-data 中包入的資料，執行時會解壓縮到 Windows 中 Temp 資料夾
+    並傳入環境餐數_MEIPASS2，故須用此方式讀取資料。
+    """
+    if not hasattr(sys, '_MEIPASS'): 
+        # for elder PyInstaller.
+        rc_path = os.environ.get("_MEIPASS2", os.getcwd())
+    else:
+        rc_path = getattr(sys, '_MEIPASS', os.getcwd())
+    return os.path.join(rc_path, rel_path)
 
 sio = socketio.AsyncServer()
 app = web.Application()
-app.router.add_static('/static', 'dist')
+app.router.add_static('/static', rc('dist'))
 sio.attach(app)
 
 async def index(request):
     """Serve the client-side application."""
-    with open('dist/index.html',"rb") as f:
+    with open(rc('dist/index.html'),"rb") as f:
         return web.Response(text=f.read().decode("utf8"), content_type='text/html')
 app.router.add_get('/', index)
 
