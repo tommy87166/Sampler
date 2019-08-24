@@ -41,7 +41,7 @@
                 </td>
                 <td>
                     <div class="input-group mb-3">
-                        <input v-model="criteria" class="form-control" min="0" required type="number" />
+                        <input v-model.number = "criteria" class="form-control" min="0" required type="number" />
                          <div class="input-group-append">
                             <span v-if=' method == "order" ' class="input-group-text">筆</span>
                             <span v-if=' method == "percent" ' class="input-group-text">%</span>

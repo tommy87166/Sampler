@@ -76,7 +76,19 @@ class sampler(object):
         return df.sort_values(self.direction,ascending=False)[:self.criteria]
     
     def __percent_sampler(self,df):
-        return None
+        #Population Size
+        population = df["debit"].sum() - df["credit"].sum()
+        if self.direction == "credit":
+            population = population * -1
+        #Calculate Target
+        target = (population / self.multiplier[0] * self.multiplier[1]) * (self.criteria / 100)
+        #Do Sampling
+        df = df.sort_values(self.direction,ascending=False)
+        for row in range(0,len(df)+1):
+            temp_df = df[0:row]
+            if temp_df[self.direction].sum() >= target:
+                break
+        return temp_df
 
     #Json Encorder
     def __jsonencode__(self):
