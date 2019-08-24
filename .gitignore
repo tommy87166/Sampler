@@ -205,3 +205,4 @@ $RECYCLE.BIN/
 *.json
 bin/*
 .vscode/*
+package-lock.json
