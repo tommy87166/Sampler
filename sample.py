@@ -120,7 +120,7 @@ class sampler(object):
             data = {
                 "名稱":self.name,
                 "母體":population,
-                "換算":"/ {} * {} =".format(self.multiplier),
+                "換算":"/ {0} * {1} =".format(*self.multiplier),
                 "換算後母體":population_expand,
                 "抽核金額":size,
                 "抽核比例":ratio
