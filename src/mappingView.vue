@@ -5,6 +5,7 @@
         <div class="btn-group mr-2" role="group" aria-label="First group">
             <button type="button" class="btn btn-outline-secondary" v-on:click="toggleuploadmappingview">上傳對應</button>
             <button type="button" class="btn btn-outline-secondary" v-on:click="downloadMapping">下載對應</button>
+            <button type="button" class="btn btn-outline-secondary" v-on:click="toggleexpandview">母體放大設定</button>
         </div>
         <div class="btn-group mr-2" role="group" aria-label="Second group">
             <button type="button" class="btn btn-outline-success" v-on:click="sample" >執行對應</button>
@@ -15,6 +16,12 @@
     <div v-if = "uploadmappingview" class="card no-border" style="margin-bottom: 10px;">
         <div class="card-body">
             <input type="file" @change="loadTextFromFile" id="file_mapping"/>
+        </div>
+    </div>
+
+    <div v-if = "expandview" class="card no-border" style="margin-bottom: 10px;">
+        <div class="card-body">
+            <h5>hi</h5>
         </div>
     </div>
 
@@ -66,7 +73,8 @@ module.exports = {
         select_account:[],
         select_rule:"",
         mapping:{},
-        uploadmappingview:false
+        uploadmappingview:false,
+        expandview:false,
       }
   },
   methods:{
@@ -115,6 +123,13 @@ module.exports = {
             this.uploadmappingview = false
         }else{
             this.uploadmappingview = true
+        }
+    },
+    toggleexpandview:function(){
+        if (this.expandview){
+            this.expandview = false
+        }else{
+            this.expandview = true
         }
     },
     loadTextFromFile:function(ev){
