@@ -40,9 +40,8 @@
                 <div class="card bg-light" v-for="(item , key ,index) in sample" style="margin-bottom: 10px;">
                     <div class="card-header">
                         {{key}}
-                        <span class="badge badge-pill badge-dark">母體：{{item.stat[1]}}</span>
-                        <span class="badge badge-pill badge-dark">樣本：{{item.stat[2]}}</span>
-                        <span class="badge badge-pill badge-dark">比例：{{Math.round(item.stat[3]*100)}}%</span>
+                        <span class="badge badge-dark">母體：{{item.stat[0]}} / {{item.multiplier[0]}} * {{item.multiplier[1]}} = {{item.stat[1]}}</span>
+                        <span class="badge badge-dark">樣本：{{item.stat[2]}} ( {{Math.round(item.stat[3]*100)}}% )</span>
                     </div>
                     <div class="card-body">
                         
