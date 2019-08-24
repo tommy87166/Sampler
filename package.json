@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.js",
-    "pack": "pyi-makespec --onefile server.py --exclude-module PyQt5 --hidden-import engineio.async_drivers.aiohttp --hidden-import engineio.async_aiohttp && pyinstaller server.spec --distpath bin && xcopy dist \/bin\/"
+    "pack": "pyi-makespec --onefile server.py --exclude-module PyQt5 --hidden-import engineio.async_drivers.aiohttp --hidden-import engineio.async_aiohttp && pyinstaller server.spec --distpath bin"
   },
   "keywords": [],
   "author": "",
