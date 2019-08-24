@@ -21,7 +21,31 @@
 
     <div v-if = "expandview" class="card no-border" style="margin-bottom: 10px;">
         <div class="card-body">
-            <h5>hi</h5>
+            <h5 class="card-title"><b>母體放大設定</b></h5>
+            <p class="card-text">期中執行抽樣時，可能需要將母體放大至整個查核期間。下面可以指定目前資料涵蓋月份和欲放大至月份。</p>
+            <p class="card-text">以下設定將會將母體 / {{ expand[0] }} * {{ expand[1] }}</p>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">目前期間</label>
+                <div class="input-group mb-3">
+                    <input type="number" min = "1" v-model.number="expand[0]" class="form-control" >
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">月(或任何單位)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">目標期間</label>
+                <div class="input-group mb-3">
+                    <input type="number" min = "1" v-model.number="expand[1]" class="form-control" >
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="basic-addon2">月(或任何單位)</span>
+                    </div>
+                </div>
+            </div>
+
+            
         </div>
     </div>
 
@@ -72,6 +96,7 @@ module.exports = {
       return{
         select_account:[],
         select_rule:"",
+        expand:[12,12],
         mapping:{},
         uploadmappingview:false,
         expandview:false,
@@ -108,7 +133,11 @@ module.exports = {
         }
     },
     sample:function(){
-        this.$socket.emit("sample",this.mapping)
+        var sample_setting = {
+            mapping : this.mapping,
+            expand  : this.expand
+        }
+        this.$socket.emit("sample",sample_setting)
     },
     downloadMapping:function(){
         var text = JSON.stringify(this.mapping)

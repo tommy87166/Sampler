@@ -179,9 +179,10 @@ async def save_rule(sid):
 #For Sampling View
 @sio.event
 async def sample(sid,data):
+    mapping,expand = data["mapping"],data["expand"]
     #驗證參數
     await sio.emit('msg',"檢查參數", room=sid)
-    apply_rules,apply_accounts = set(data.keys()),set(itertools.chain.from_iterable(data.values()))
+    apply_rules,apply_accounts = set(mapping.keys()),set(itertools.chain.from_iterable(mapping.values()))
     try:
         for rule in apply_rules:
             assert rule in rules, "規則 {} 不在定義的規則集中".format(rule)
@@ -189,13 +190,15 @@ async def sample(sid,data):
             selected_df = ledger[ledger["acc_no"] == account]
             assert len(selected_df) > 0,"明細帳中找不到科目 {}".format(account)
     #將資料載入Sampler中
-        for key,accounts in data.items():
+        for key,accounts in mapping.items():
             rules[key].load( ledger[ledger["acc_no"].isin(accounts)] )
+            rules[key].multiplier = int(expand[0]),int(expand[1])
     except Exception as e:
         await sio.emit('error',str(e), room=sid)
     finally:
         await sio.emit('msg',"資料載入完成", room=sid)
     
+
 @sio.event
 async def result(sid):
     try:
@@ -235,7 +238,7 @@ async def download(request):
     for sampler in rules.values():
         sampler.to_excel(writer)
         sampler.export_stat(stat)
-    pandas.DataFrame(stat)[["名稱","母體","換算後母體","抽核金額","抽核比例"]].to_excel(writer,sheet_name="抽核比例",index=False)
+    pandas.DataFrame(stat)[["名稱","母體","換算","換算後母體","抽核金額","抽核比例"]].to_excel(writer,sheet_name="抽核比例",index=False)
     #存檔並傳送
     writer.save()
     io.seek(0)

@@ -106,7 +106,8 @@ class sampler(object):
             #"df"         : json.loads(self.df.to_json(orient="records")),
             "result"     : json.loads(self.result.to_json(orient="records")),
             "parameter"  : self.__jsonencode__(),
-            "stat"       : self.stat   
+            "stat"       : self.stat,
+            "multiplier" : self.multiplier
         }
 
     def to_excel(self,writer):
@@ -119,6 +120,7 @@ class sampler(object):
             data = {
                 "名稱":self.name,
                 "母體":population,
+                "換算":"/ {} * {} =".format(self.multiplier),
                 "換算後母體":population_expand,
                 "抽核金額":size,
                 "抽核比例":ratio
