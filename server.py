@@ -2,7 +2,6 @@ from aiohttp import web
 from aiohttp import streamer
 import asyncio
 import socketio
-import webbrowser
 import pandas
 import json
 from io import BytesIO
@@ -10,9 +9,8 @@ from sample import AdvancedJSONEncoder,AdvancedJSONEncoderResult,sampler
 import concurrent.futures
 from functools import partial
 import os
-import pickle
 import itertools
-
+import random
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -202,10 +200,10 @@ async def skip(sid,data):
 
 @sio.event
 def connect(sid, environ):
-    print("connect ", sid)
+    print("已連線")
 @sio.event
 def disconnect(sid):
-    print('disconnect ', sid)
+    print("瀏覽器已關閉，可以直接關閉本程式")
 
 @streamer
 async def stream(writer,reader=None):
@@ -239,7 +237,8 @@ app.router.add_get('/download', download)
 
 
 if __name__ == '__main__':
-    host,port="127.0.0.1",8888
+    host,port="127.0.0.1",random.randint(6000,9000)
+    print("\n請開啟 Chrome 並連線到 http://{}:{}\n".format(host,port))
     loop = asyncio.get_event_loop()
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     web.run_app(app,host=host,port=port)
